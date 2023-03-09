@@ -41,9 +41,15 @@ HAVING count(city) > 1);
 -- Найти ближайший вылетающий рейс из Екатеринбурга в Москву,
 --на который еще не завершилась регистрация
 SELECT * FROM flights
-WHERE departure_airport LIKE 'SVX'
-AND arrival_airport IN ('VKO', 'SVO', 'DME')
-AND status LIKE 'Scheduled'
+WHERE departure_airport IN(
+		SELECT airport_code
+		FROM airports_data
+		WHERE city @> '{"ru":"Екатеринбург"}')
+AND arrival_airport IN (
+        SELECT airport_code
+		FROM airports_data
+		WHERE city @> '{"ru":"Москва"}')
+AND status IN ('Scheduled')
 ORDER BY scheduled_departure
 LIMIT 1;
 --Вывести самый дешевый и дорогой билет и стоимость ( в одном результирующем ответе)
